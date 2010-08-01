@@ -1,8 +1,7 @@
 // Returns current week of the semester
 function currentWeek() {
-
-   var week0 = new Date("February 21, 2010");
-   var midBreak = new Date("April 4, 2010");
+   var week0 = new Date("July 11, 2010");
+   var midBreak = new Date("September 5, 2010");
    var today = new Date();
    var diff = new Date (today.getTime()-week0.getTime());
    var week = Math.floor(diff.getTime() / (1000 * 60 * 60 * 24 * 7));
@@ -14,14 +13,7 @@ function currentWeek() {
 
 // Returns the week the timetable is displaying for
 function getWeek() {
-
    return document.title.match(/-?\d+/);
-}
-
-// Returns whether or not number is odd
-function isOdd(num) {
-
-   return num % 2 == 1;
 }
 
 // Adds a rule to the CSS stylesheet
@@ -61,26 +53,6 @@ function removeCSSRule(name) {
    }
 }
 
-// Show Odd Week Classes
-function showOddClasses() {
-   removeCSSRule(".odd");
-}
-
-// Show Even Week Classes
-function showEvenClasses() {
-   removeCSSRule(".even");
-}
-
-// Hide Odd Week Classes
-function hideOddClasses() {
-   addCSSRule(".odd", "display: none");
-}
-
-// Hide Even Week Classes
-function hideEvenClasses() {
-   addCSSRule(".even", "display: none");
-}
-
 // Displays the appropriate timetable for the given week
 // if no week is given, uses current week
 function displayTimetable(week) {
@@ -97,41 +69,38 @@ function displayTimetable(week) {
    document.getElementById('this').disabled = (week == currentWeek());
    document.getElementById('next').disabled = (week >= 13);
 
-   var init = (getWeek() === null);
-   var update = (init || (isOdd(week) != isOdd(getWeek())));
-
    document.title="Johnny G's Timetable for Week "+week;
    window.status="Johnny G's Timetable for Week "+week;
 
-   if (!init && update) {
-      if (isOdd(week)) {
-         showOddClasses();
-      } else {
-         showEvenClasses();
-      }
+   if (getWeek() !== null) {
+      removeCSSRule(".notWk"+getWeek());
    }
-
-   if (update) {
-      if (isOdd(week)) {
-         hideEvenClasses();
-      } else {
-         hideOddClasses();
-      }
-   }
+   addCSSRule(".notWk"+week, "display: none");
 }
 
 function init(e) {
-
    displayTimetable();
 
    if (document.addEventListener) {
-      document.getElementById('prev').addEventListener('click', function () { displayTimetable(parseInt(getWeek())-1); }, false);
-      document.getElementById('this').addEventListener('click', function () { displayTimetable(); }, false);
-      document.getElementById('next').addEventListener('click', function () { displayTimetable(parseInt(getWeek())+1); }, false);
+      document.getElementById('prev').addEventListener('click', function () {
+         displayTimetable(parseInt(getWeek())-1);
+      }, false);
+      document.getElementById('this').addEventListener('click', function () {
+         displayTimetable();
+      }, false);
+      document.getElementById('next').addEventListener('click', function () {
+         displayTimetable(parseInt(getWeek())+1);
+      }, false);
    } else {
-      document.getElementById('prev').attachEvent('onclick', function () { displayTimetable(parseInt(getWeek())-1); });
-      document.getElementById('this').attachEvent('onclick', function () { displayTimetable(); });
-      document.getElementById('next').attachEvent('onclick', function () { displayTimetable(parseInt(getWeek())+1); });
+      document.getElementById('prev').attachEvent('onclick', function () {
+         displayTimetable(parseInt(getWeek())-1);
+      });
+      document.getElementById('this').attachEvent('onclick', function () {
+         displayTimetable();
+      });
+      document.getElementById('next').attachEvent('onclick', function () {
+         displayTimetable(parseInt(getWeek())+1);
+      });
    }
 }
 
