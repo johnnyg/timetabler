@@ -36,4 +36,4 @@ for section in config.sections():
                 option_value = weeks
         activities[activity][activity_type][option] = option_value
 
-pprint.pprint(activities)
+pprint.pprint(activities, width=120)
