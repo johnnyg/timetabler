@@ -10,7 +10,7 @@ DEFAULTS = {
 }
 
 config = ConfigParser.RawConfigParser(DEFAULTS)
-config.read("timetable.conf")
+config.read("timetable.ini")
 
 activities = {}
 
