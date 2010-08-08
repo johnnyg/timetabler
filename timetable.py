@@ -4,10 +4,10 @@
 import ConfigParser
 
 class Event(object):
-    def __init__(self, title, options):
-        # Parse title
-        if '#' in title:
-            title = title.partition('#')[0]
+    def __init__(self, name, options):
+        # Parse name
+        if '#' in name:
+            name = name.partition('#')[0]
 
         # Parse weeks
         if options["weeks"] == "odd":
@@ -42,7 +42,8 @@ class Event(object):
         start = (int(start) + offset) % 24
         options["time"] = "%s %d-%d" % (day, start, end)
 
-        (self.__name, self.__type) = title.partition(':')[::2]
+        (self.__name, self.__form) = name.partition(':')[::2]
+        self.__category = options["type"]
         self.__location = options["location"]
         self.__weeks = options["weeks"]
         self.__time = options["time"]
@@ -52,8 +53,12 @@ class Event(object):
         return self.__name
 
     @property
-    def type(self):
-        return self.__type
+    def form(self):
+        return self.__form
+
+    @property
+    def category(self):
+        return self.__category
 
     @property
     def location(self):
@@ -76,14 +81,14 @@ class Event(object):
         return self.__weeks
 
     def __str__(self):
-        if self.__type:
-            s = "%s (%s)" % (self.__name, self.__type)
+        return repr(self)
+
+    def __repr__(self):
+        if self.__form:
+            s = "%s (%s)" % (self.__name, self.__form)
         else:
             s = self.__name
         return s
-
-    def __repr__(self):
-        return str(self)
 
 def parse_config(config_file):
 
@@ -102,8 +107,71 @@ def parse_config(config_file):
 
     return timetable
 
+def timetable_to_html(timetable):
+    html = """
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <title>Johnny G's Timetable</title>
+   <link rel="stylesheet" type="text/css" href="timetable.css" />
+   <script type="text/javascript" src="timetable.js"></script>
+</head>
+
+<body>
+   <table summary="timetable">
+       <tr>
+          <th class="header">Hour</th>
+
+          <th class="header">Monday</th>
+
+          <th class="header">Tuesday</th>
+
+          <th class="header">Wednesday</th>
+
+          <th class="header">Thursday</th>
+
+          <th class="header">Friday</th>
+       </tr>"""
+
+    for hour in sorted(timetable):
+        html += """
+
+       <tr>
+          <th>%d:00</th>""" % hour
+
+        for day in ("Mon", "Tue", "Wed", "Thu", "Fri"):
+            if day in timetable[hour]:
+                for event in timetable[hour][day]:
+                    if event.start == hour:
+                        html += """
+
+          <td class="%s" rowspan="%d">
+             %s<br />
+             %s<br />
+             %s
+          </td>""" % (' '.join([event.category] + ["notWk%d" % week for week in set(range(1,14)) - set(event.weeks)]),
+                      (event.finish - event.start) % 24, event.name, event.form, event.location)
+            else:
+                html += """
+
+          <td></td>"""
+
+    html += """
+   </table>
+
+   <div>
+       <input type="submit" value="previous week" id="prev" />
+       <input type="submit" value="this week" id="this" />
+       <input type="submit" value="next week" id="next" />
+   </div>
+</body>
+</html>"""
+
+    return html
+
 if __name__ == "__main__":
 
     import sys
 
-    print parse_config(sys.argv[1])
+    print timetable_to_html(parse_config(sys.argv[1]))
