@@ -69,13 +69,13 @@ function displayTimetable(week) {
    document.getElementById('this').disabled = (week == currentWeek());
    document.getElementById('next').disabled = (week >= 13);
 
-   document.title="Johnny G's Timetable for Week "+week;
-   window.status="Johnny G's Timetable for Week "+week;
-
    if (getWeek() !== null) {
       removeCSSRule(".notWk"+getWeek());
    }
    addCSSRule(".notWk"+week, "display: none");
+
+   document.title="Johnny G's Timetable for Week "+week;
+   window.status="Johnny G's Timetable for Week "+week;
 }
 
 function init(e) {
