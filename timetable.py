@@ -137,7 +137,7 @@ def timetable_to_html(timetable):
         html += """
 
        <tr>
-          <th>%d:00</th>""" % hour
+          <th>%d:00 %s</th>""" % ((hour % 12, hour)[hour == 12], ("am", "pm")[hour >= 12])
 
         for day in ("Mon", "Tue", "Wed", "Thu", "Fri"):
             if day in timetable[hour]:
