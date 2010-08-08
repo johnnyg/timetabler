@@ -140,10 +140,11 @@ def timetable_to_html(timetable):
           <th>%d:00 %s</th>""" % ((hour % 12, hour)[hour == 12], ("am", "pm")[hour >= 12])
 
         for day in ("Mon", "Tue", "Wed", "Thu", "Fri"):
-            if day in timetable[hour]:
-                for event in timetable[hour][day]:
-                    if event.start == hour:
-                        html += """
+            weeks = set()
+            for event in timetable[hour].get(day, []):
+                weeks.update(event.weeks)
+                if event.start == hour:
+                    html += """
 
           <td class="%s" rowspan="%d">
              %s<br />
@@ -151,11 +152,15 @@ def timetable_to_html(timetable):
              %s
           </td>""" % (' '.join([event.category] + ["notWk%d" % week for week in set(range(1,14)) - set(event.weeks)]),
                       (event.finish - event.start) % 24, event.name, event.form, event.location)
-            else:
+
+
+            if len(weeks) < 14:
+                classes = ' '.join(["notWk%d" % week for week in weeks])
+                if classes:
+                    classes = ' class="%s"' % classes
                 html += """
 
-          <td></td>"""
-
+          <td%s></td>""" % classes
     html += """
    </table>
 
