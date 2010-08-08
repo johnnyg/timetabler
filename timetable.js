@@ -16,6 +16,12 @@ function getWeek() {
    return document.title.match(/-?\d+/);
 }
 
+// Sets the week the timetable is displaying for
+function setWeek(week) {
+   document.title="Johnny G's Timetable for Week "+week;
+   window.status="Johnny G's Timetable for Week "+week;
+}
+
 // Adds a rule to the CSS stylesheet
 function addCSSRule(name, text) {
    var styleSheet = document.styleSheets[0];
@@ -74,8 +80,8 @@ function displayTimetable(week) {
    }
    addCSSRule(".notWk"+week, "display: none");
 
-   document.title="Johnny G's Timetable for Week "+week;
-   window.status="Johnny G's Timetable for Week "+week;
+   // Make sure we do this last!
+   setWeek(week);
 }
 
 function init(e) {
