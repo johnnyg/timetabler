@@ -1,55 +1,109 @@
 #!/usr/bin/env python
-# Creates a timetable's HTML file
+# Creates a timetable webpage for a given timetable ini file
 
 import ConfigParser
-import pprint
 
-DEFAULTS = {
-    'type'  : 'class',
-    'weeks' : '1-14'
-}
+class Event(object):
+    def __init__(self, title, options):
+        # Parse title
+        if '#' in title:
+            title = title.partition('#')[0]
 
-config = ConfigParser.RawConfigParser(DEFAULTS)
-config.read("timetable.ini")
+        # Parse weeks
+        if options["weeks"] == "odd":
+            options["weeks"] = range(1,14,2)
+        elif options["weeks"] == "even":
+            options["weeks"] = range(2,14,2)
+        else:
+            weeks = []
+            for week in options["weeks"].split(','):
+                (first, last) = week.partition('-')[::2]
+                if not last:
+                    last = first
+                weeks.extend(range(int(first),int(last)+1))
+            options["weeks"] = weeks
 
-activities = {}
+        # Parse time
+        (day, time) = options["time"].partition(' ')[::2]
+        (start, end) = time.partition('-')[::2]
+        if end.endswith("pm"):
+            offset = 12
+            end = end.replace("pm","")
+        else:
+            offset = 0
+            end = end.replace("am","")
+        end = (int(end) + offset) % 24
+        if start.endswith("am"):
+            offset = 0
+            start = start.replace("am", "")
+        elif start.endswith("pm"):
+            offset = 12
+            start = start.replace("pm", "")
+        start = (int(start) + offset) % 24
+        options["time"] = "%s %d-%d" % (day, start, end)
 
-for section in config.sections():
-    (activity, sep, activity_type) = section.partition(':')
-    activities.setdefault(activity, {})[activity_type] = {}
-    for option in config.options(section):
-        option_value = config.get(section, option)
-        if option == "weeks":
-            if option_value == "odd":
-                option_value = range(1,14,2)
-            elif option_value == "even":
-                option_value = range(2,14,2)
-            else:
-                weeks = []
-                for week in option_value.split(','):
-                    (first, sep, last) = week.partition('-')
-                    if not last:
-                        last = first
-                    weeks.extend(range(int(first),int(last)+1))
-                option_value = weeks
-        elif option == "time":
-            (day, sep, time) = option_value.partition(' ')
-            (start, sep, end) = time.partition('-')
-            if end.endswith("pm"):
-                offset = 12
-                end = end.replace("pm","")
-            else:
-                offset = 0
-                end = end.replace("am","")
-            end = (int(end) + offset) % 24
-            if start.endswith("am"):
-                offset = 0
-                start = start.replace("am", "")
-            elif start.endswith("pm"):
-                offset = 12
-                start = start.replace("pm", "")
-            start = (int(start) + offset) % 24
-            option_value = "%s %d-%d" % (day, start, end)
-        activities[activity][activity_type][option] = option_value
+        (self.__name, self.__type) = title.partition(':')[::2]
+        self.__location = options["location"]
+        self.__weeks = options["weeks"]
+        self.__time = options["time"]
 
-pprint.pprint(activities, width=120)
+    @property
+    def name(self):
+        return self.__name
+
+    @property
+    def type(self):
+        return self.__type
+
+    @property
+    def location(self):
+        return self.__location
+
+    @property
+    def start(self):
+        return int(self.__time.partition(' ')[2].partition('-')[0])
+
+    @property
+    def finish(self):
+        return int(self.__time.partition(' ')[2].partition('-')[2])
+
+    @property
+    def day(self):
+        return self.__time.partition(' ')[0]
+
+    @property
+    def weeks(self):
+        return self.__weeks
+
+    def __str__(self):
+        if self.__type:
+            s = "%s (%s)" % (self.__name, self.__type)
+        else:
+            s = self.__name
+        return s
+
+    def __repr__(self):
+        return str(self)
+
+def parse_config(config_file):
+
+    config = ConfigParser.RawConfigParser({
+        'type'  : 'class',
+        'weeks' : '1-14'
+    })
+    config.read(config_file)
+
+    timetable = {}
+
+    for section in config.sections():
+        event = Event(section, dict(config.items(section)))
+        for hour in xrange(event.start, event.finish):
+            timetable.setdefault(hour, {}).setdefault(event.day, []).append(event)
+
+    return timetable
+
+if __name__ == "__main__":
+
+    import sys
+
+    print parse_config(sys.argv[1])
