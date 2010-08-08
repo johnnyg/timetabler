@@ -161,6 +161,10 @@ def timetable_to_html(timetable):
                 html += """
 
           <td%s></td>""" % classes
+
+        html += """
+       </tr>"""
+
     html += """
    </table>
 
