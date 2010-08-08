@@ -108,8 +108,7 @@ def parse_config(config_file):
     return timetable
 
 def timetable_to_html(timetable):
-    html = """
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+    html = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -174,4 +173,17 @@ if __name__ == "__main__":
 
     import sys
 
-    print timetable_to_html(parse_config(sys.argv[1]))
+    for config_file in sys.argv[1:]:
+        out_file = config_file.rpartition('.')[0] + ".html"
+        try:
+            timetable = parse_config(config_file)
+        except Exception, e:
+            print "Error parsing %s: %s" % (config_file, e)
+        else:
+            try:
+                f = open(out_file, "w")
+                f.write(timetable_to_html(timetable))
+            except Exception, e:
+                print "Error writing to %s: %s" % (out_file, e)
+            finally:
+                f.close()
