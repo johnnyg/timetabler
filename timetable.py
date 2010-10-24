@@ -2,6 +2,7 @@
 # Creates a timetable webpage for a given timetable ini file
 
 import ConfigParser
+from cgi import escape
 
 class Event(object):
     def __init__(self, name, options):
@@ -151,7 +152,7 @@ def timetable_to_html(timetable):
              %s<br />
              %s
           </td>""" % (' '.join([event.category] + ["notWk%d" % week for week in set(range(1,14)) - set(event.weeks)]),
-                      (event.finish - event.start) % 24, event.name, event.form, event.location)
+                      (event.finish - event.start) % 24, escape(event.name), escape(event.form), escape(event.location))
 
 
             if len(weeks) < 14:
