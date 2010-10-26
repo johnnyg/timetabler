@@ -51,11 +51,11 @@ class Exam(object):
 
     @property
     def start(self):
-        return self.__start.strftime("%H:%M %p")
+        return self.__start.strftime("%I:%M %p")
 
     @property
     def end(self):
-        return self.__end.strftime("%H:%M %p")
+        return self.__end.strftime("%I:%M %p")
 
     @property
     def bring(self):
