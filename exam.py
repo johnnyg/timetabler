@@ -4,7 +4,9 @@
 import ConfigParser
 from cgi import escape
 from datetime import datetime, time
+from functools import total_ordering
 
+@total_ordering
 class Exam(object):
     def __init__(self, name, options):
         # Parse name
@@ -21,6 +23,12 @@ class Exam(object):
         self.__end = datetime.combine(date, end.time())
         self.__location = options["location"]
         self.__bring = options["bring"]
+
+    def __lt__(self, other):
+        return self.__start < other.__start
+
+    def __eq__(self, other):
+        return self.__start == other.__start
 
     @property
     def course(self):
@@ -96,7 +104,7 @@ def exams_to_html(exams):
          <th>Bring</th>
       </tr>""" % (semester, now.strftime("%y"), semester, now.strftime("%Y"))
 
-    for exam in exams:
+    for exam in sorted(exams):
         html += """
       <tr>
          <td>%s</td>
