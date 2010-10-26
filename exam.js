@@ -40,12 +40,13 @@ function updateCountdowns(exams) {
 
    // Update countdowns
    for (var i = 0, len = exams.length; i < len; i++) {
-      var row = exams[i]["row"];
+      var node = exams[i]["node"];
       var date = exams[i]["date"];
-      if (date > now) {
-         table.rows[row].cells[2].firstChild.nodeValue = countdown(date, now);
+      if (date >= now) {
+         node.nodeValue = countdown(date, now);
       } else {
-         table.deleteRow(row);
+         var row = node.parentNode.parentNode;
+         row.parentNode.removeChild(row);
          toDelete++;
       }
    }
@@ -66,8 +67,10 @@ function init(e) {
       var time = col[4].firstChild.nodeValue;
       date = date.replace('the', '');
       date = date.replace('of', '');
-      col[2].appendChild(document.createTextNode(""));
-      exams.push({ "row" : i, "date" : new Date(time+" "+date+" "+year) });
+      if (!col[2].hasChildNodes()) {
+         col[2].appendChild(document.createTextNode(""));
+      }
+      exams.push({ "node" : col[2].firstChild, "date" : new Date(time+" "+date+" "+year) });
    }
 
    // Update Countdowns every 1000ms (1s)
