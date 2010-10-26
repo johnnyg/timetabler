@@ -65,12 +65,12 @@ function init(e) {
       var col = courses.rows[i].cells;
       var date = col[3].firstChild.nodeValue;
       var time = col[4].firstChild.nodeValue;
-      date = date.replace('the', '');
-      date = date.replace('of', '');
+      date = date.replace(/\b(the|of)\b/g, '');
+      date = date.replace(/\b(\d{1,2})(st|nd|rd|th)\b/, '$1');
       if (!col[2].hasChildNodes()) {
          col[2].appendChild(document.createTextNode(""));
       }
-      exams.push({ "node" : col[2].firstChild, "date" : new Date(time+" "+date+" "+year) });
+      exams.push({ "node" : col[2].firstChild, "date" : new Date(date+" "+time+" "+year) });
    }
 
    // Update Countdowns every 1000ms (1s)
