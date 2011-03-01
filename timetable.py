@@ -33,14 +33,16 @@ class Event(object):
         else:
             offset = 0
             end = end.replace("am","")
-        end = (int(end) + offset) % 24
+        end = (int(end) % 12) + offset
         if start.endswith("am"):
             offset = 0
             start = start.replace("am", "")
         elif start.endswith("pm"):
             offset = 12
             start = start.replace("pm", "")
-        start = (int(start) + offset) % 24
+        start = (int(start) % 12) + offset
+        if start >= end:
+            raise ValueError, "Start time (%d) must be less than end time (%d)!" % (start, end)
         options["time"] = "%s %d-%d" % (day, start, end)
 
         (self.__name, self.__form) = name.partition(':')[::2]
