@@ -1,7 +1,8 @@
 // Returns current week of the semester
 function currentWeek() {
-   var week0 = new Date("July 11, 2010");
-   var midBreak = new Date("September 5, 2010");
+   // weeks start on Sunday
+   var week0 = new Date("February 20, 2011");
+   var midBreak = new Date("April 24, 2011");
    var today = new Date();
    var diff = new Date (today.getTime()-week0.getTime());
    var week = Math.floor(diff.getTime() / (1000 * 60 * 60 * 24 * 7));
