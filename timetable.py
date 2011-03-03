@@ -136,7 +136,12 @@ def timetable_to_html(timetable):
           <th class="header">Friday</th>
        </tr>"""
 
-    for hour in sorted(timetable):
+    if timetable:
+        hours = xrange(min(timetable), max(timetable)+1)
+    else:
+        hours = []
+
+    for hour in hours:
         html += """
 
        <tr>
@@ -144,7 +149,7 @@ def timetable_to_html(timetable):
 
         for day in ("Mon", "Tue", "Wed", "Thu", "Fri"):
             weeks = set()
-            for event in timetable[hour].get(day, []):
+            for event in timetable.get(hour, {}).get(day, []):
                 weeks.update(event.weeks)
                 if event.start == hour:
                     html += """
