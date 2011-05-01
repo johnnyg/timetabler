@@ -4,9 +4,7 @@
 import ConfigParser
 from cgi import escape
 from datetime import datetime, time
-from functools import total_ordering
 
-@total_ordering
 class Exam(object):
     def __init__(self, name, options):
         # Parse name
@@ -27,8 +25,20 @@ class Exam(object):
     def __lt__(self, other):
         return self.__start < other.__start
 
+    def __le__(self, other):
+        return self.__start <= other.__start
+
     def __eq__(self, other):
         return self.__start == other.__start
+
+    def __ne__(self, other):
+        return self.__start != other.__start
+
+    def __gt__(self, other):
+        return self.__start > other.__start
+
+    def __ge__(self, other):
+        return self.__start >= other.__start
 
     @property
     def course(self):
