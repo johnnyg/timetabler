@@ -14,13 +14,13 @@ function currentWeek() {
 
 // Returns the week the timetable is displaying for
 function getWeek() {
-   return document.title.match(/-?\d+/);
+   return document.title.match(/\d+/);
 }
 
 // Sets the week the timetable is displaying for
 function setWeek(week) {
-   document.title="Johnny G's Timetable for Week "+week;
-   window.status="Johnny G's Timetable for Week "+week;
+   document.title="Week "+week;
+   window.status="Timetable for Week "+week;
 }
 
 // Adds a rule to the CSS stylesheet
