@@ -108,7 +108,10 @@ function init(e) {
    }
 }
 
-if (currentWeek() > 13) {
+if (currentWeek() < 1) {
+   alert("Uni hasn't started yet!");
+   window.location = "index.html";
+} else if (currentWeek() > 13) {
    window.location = "exam";
 }
 
