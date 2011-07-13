@@ -101,6 +101,10 @@ def parse_config(config_file):
     })
     config.read(config_file)
 
+    o_week = config.get("Semester", "oweek")
+    mid_break = config.get("Semester", "break")
+    config.remove_section("Semester")
+
     timetable = {}
 
     for section in config.sections():
@@ -108,15 +112,19 @@ def parse_config(config_file):
         for hour in xrange(event.start, event.finish):
             timetable.setdefault(hour, {}).setdefault(event.day, []).append(event)
 
-    return timetable
+    return (timetable, o_week, mid_break)
 
-def timetable_to_html(timetable):
+def timetable_to_html(timetable, o_week, mid_break):
     html = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
    <title>Johnny G's Timetable</title>
    <link rel="stylesheet" type="text/css" href="timetable.css" />
+   <script type="text/javascript">
+      var O_WEEK = new Date("%s");
+      var MID_BREAK = new Date("%s");
+   </script>
    <script type="text/javascript" src="timetable.js"></script>
 </head>
 
@@ -134,7 +142,7 @@ def timetable_to_html(timetable):
           <th class="header">Thursday</th>
 
           <th class="header">Friday</th>
-       </tr>"""
+       </tr>""" % (o_week, mid_break)
 
     if timetable:
         hours = xrange(min(timetable), max(timetable)+1)
@@ -199,7 +207,7 @@ if __name__ == "__main__":
         else:
             try:
                 f = open(out_file, "w")
-                f.write(timetable_to_html(timetable))
+                f.write(timetable_to_html(*timetable))
             except Exception, e:
                 print "Error writing to %s: %s" % (out_file, e)
             finally:
