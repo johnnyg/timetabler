@@ -65,7 +65,10 @@ function displayTimetable(week) {
       week = currentWeek();
    }
 
-   if (week > 13) {
+   if (week < 1) {
+      alert("Uni hasn't started yet!");
+      window.location = "index.html";
+   } else if (week > 13) {
       window.location = "exam";
    }
 
@@ -84,6 +87,9 @@ function displayTimetable(week) {
 
 function init(e) {
    displayTimetable();
+   addCSSRule("#nojs", "display: none");
+   removeCSSRule("#navigation");
+   removeCSSRule("#timetable");
 
    if (document.addEventListener) {
       document.getElementById('prev').addEventListener('click', function () {
@@ -106,13 +112,6 @@ function init(e) {
          displayTimetable(parseInt(getWeek())+1);
       });
    }
-}
-
-if (currentWeek() < 1) {
-   alert("Uni hasn't started yet!");
-   window.location = "index.html";
-} else if (currentWeek() > 13) {
-   window.location = "exam";
 }
 
 if (window.addEventListener) {

@@ -85,3 +85,13 @@ th
     position: absolute;
     right: 0;
 }
+
+#navigation
+{
+   display: none;
+}
+
+#timetable
+{
+   display: none;
+}

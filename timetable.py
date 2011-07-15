@@ -129,7 +129,7 @@ def timetable_to_html(timetable, o_week, mid_break):
 </head>
 
 <body>
-   <table summary="timetable">
+   <table id="timetable" summary="timetable">
        <tr>
           <th class="header">Hour</th>
 
@@ -184,11 +184,14 @@ def timetable_to_html(timetable, o_week, mid_break):
     html += """
    </table>
 
-   <div>
+   <div id="navigation">
        <input type="submit" value="previous week" id="prev" />
        <input type="submit" value="this week" id="this" />
        <input type="submit" value="next week" id="next" />
    </div>
+   <p id="nojs">
+       You need to enable JavaScript to view this timetable.
+   </p>
 </body>
 </html>"""
 
