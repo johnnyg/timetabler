@@ -73,11 +73,11 @@ function init(e) {
       exams.push({ "node" : col[2].firstChild, "date" : new Date(date+" "+time+" "+year) });
    }
 
-   // Update Countdowns every 1000ms (1s)
+   // Update Countdowns every 500ms (0.5s)
    updateCountdowns(exams);
    setInterval(function () {
       updateCountdowns(exams);
-   }, 1000);
+   }, 500);
 }
 
 if (window.addEventListener) {
